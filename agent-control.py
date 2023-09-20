@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import os
+import sys
 import typer
 import subprocess
 from typing import List
@@ -54,4 +56,5 @@ def test_interface(agent_ips: Annotated[List[str], typer.Argument()],
     agent.SetTestInterface (test_interface)
 
 if __name__ == "__main__":
-    agentContoller()
+    progName = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+    typer.main.get_command(agentContoller)(prog_name=progName)
