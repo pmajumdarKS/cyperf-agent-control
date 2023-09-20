@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/aps2/github/cyperf-agent-control/.agent-control"
+VIRTUAL_ENV="$(pwd)/.agent-control"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
