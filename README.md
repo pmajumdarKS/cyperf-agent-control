@@ -10,6 +10,8 @@ A simple python script that can ssh into multiple cyperf agents and run some pre
 
 - [Installation](#installation)
 - [License](#license)
+- [CLI](#cli)
+- [Module](#module)
 
 ## Installation
 
@@ -40,10 +42,10 @@ Options:
 Commands:
   reload
   set-controller
-  test-interface
+  set-test-interface
 
 ```
-## Setting controller IP for multiple agents
+### Setting controller IP for multiple agents
 ```
 [PROMPT]:~$ cyperf-agent-manager set-controller --help
 Usage: cyperf-agent-manager set-controller [OPTIONS] AGENT_IPS...
@@ -91,7 +93,7 @@ Portmanager service restarted.
 Connecting....Connected
 
 ```
-## Reloading configuration for multiple agents
+### Reloading configuration for multiple agents
 ```
 [PROMPT]:~$ cyperf-agent-manager reload --help
 Usage: cyperf-agent-manager reload [OPTIONS] AGENT_IPS...
@@ -135,10 +137,10 @@ Connecting....Connected
 
 
 ```
-## Setting test interface for multiple agents
+### Setting test interface for multiple agents
 ```
-[PROMPT]:~$ cyperf-agent-manager test-interface --help
-Usage: cyperf-agent-manager test-interface [OPTIONS] AGENT_IPS...
+[PROMPT]:~$ cyperf-agent-manager set-test-interface --help
+Usage: cyperf-agent-manager set-test-interface [OPTIONS] AGENT_IPS...
 
 Arguments:
   AGENT_IPS...  [required]
@@ -150,7 +152,7 @@ Options:
 Example:
 ========
 
-[PROMPT]:~$ cyperf-agent-manager test-interface --test-interface auto 10.36.75.69 10.36.75.70
+[PROMPT]:~$ cyperf-agent-manager set-test-interface --test-interface auto 10.36.75.69 10.36.75.70
 Configuring agent 10.36.75.69
 
 Test Interface is set successfully.
@@ -196,7 +198,7 @@ agentIPs     = [ '192.168.0.1', '192.168.0.2' ]
 controllerIP = '192.168.100.1'
 testIface    = 'ens192'
 
-agents       = caMgr.CyPerfAgent(agentIPs)
+agents       = caMgr.CyPerfAgentManager(agentIPs)
 
 agents.ControllerSet (controllerIP)
 agents.Reload ()

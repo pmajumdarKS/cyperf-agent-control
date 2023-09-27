@@ -7,7 +7,7 @@ import subprocess
 from typing import List
 from typing_extensions import Annotated
 
-class CyPerfAgent (object):
+class CyPerfAgentManager (object):
     def __init__ (self, agentIPs = []):
         self.userName = 'cyperf'
         self.password = 'cyperf'
@@ -41,19 +41,19 @@ agentContoller = typer.Typer()
 @agentContoller.command()
 def set_controller(agent_ips: Annotated[List[str], typer.Argument()],
                    controller_ip: Annotated[str, typer.Option()]):
-    agent = CyPerfAgent (agent_ips)
-    agent.ControllerSet (controller_ip)
+    agentMgr = CyPerfAgentManager (agent_ips)
+    agentMgr.ControllerSet (controller_ip)
 
 @agentContoller.command()
 def reload(agent_ips: Annotated[List[str], typer.Argument()]):
-    agent = CyPerfAgent (agent_ips)
-    agent.Reload ()
+    agentMgr = CyPerfAgentManager (agent_ips)
+    agentMgr.Reload ()
 
 @agentContoller.command()
-def test_interface(agent_ips: Annotated[List[str], typer.Argument()],
+def set_test_interface(agent_ips: Annotated[List[str], typer.Argument()],
                    test_interface: Annotated[str, typer.Option()]):
-    agent = CyPerfAgent (agent_ips)
-    agent.SetTestInterface (test_interface)
+    agentMgr = CyPerfAgentManager (agent_ips)
+    agentMgr.SetTestInterface (test_interface)
 
 def main():
     progName = os.path.splitext(os.path.basename(sys.argv[0]))[0]
