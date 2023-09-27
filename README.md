@@ -198,9 +198,9 @@ agentIPs     = [ '192.168.0.1', '192.168.0.2' ]
 controllerIP = '192.168.100.1'
 testIface    = 'ens192'
 
-agents       = caMgr.CyPerfAgentManager(agentIPs)
+agentMgr     = caMgr.CyPerfAgentManager(agentIPs)
 
-agents.ControllerSet (controllerIP)
-agents.Reload ()
-agents.SetTestInterface (testIface)
+agentMgr.ControllerSet (controllerIP)
+agentMgr.Reload ()
+agentMgr.SetTestInterface (testIface)
 ```
