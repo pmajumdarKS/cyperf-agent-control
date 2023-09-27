@@ -1,13 +1,33 @@
 # cyperf-agent-control
 A simple python script that can ssh into multiple cyperf agents and run some pre-defined commands
 
+[![PyPI - Version](https://img.shields.io/pypi/v/cyperfagent-control.svg)](https://pypi.org/project/cyperfagent-control)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cyperfagent-control.svg)](https://pypi.org/project/cyperfagent-control)
+
+-----
+
+**Table of Contents**
+
+- [Installation](#installation)
+- [License](#license)
+
+## Installation
+
+```console
+pip install cyperf-agent-control
+```
+
+## License
+
+`cyperf-agent-control` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+
 ## Starting Point
-`agent-control` is the top-level program which is a very thin wrapper over `agent-control.py`. `agent-control` activates a virtual Python environment and then calls into `agent-control.py` for the actual execution of the commands.
+`cyperf-agent-control` is the top-level program which is a very thin wrapper over `cyperf_agent_control` package. For details you can run `cyperf-agent-control --help` command.
 
 The command details can be found by running the script with `--help` option, as shown in the following blocks.
 ```
-[PROMPT]:~/github/cyperf-agent-control$ ./agent-control --help
-Usage: agent-control [OPTIONS] COMMAND [ARGS]...
+[PROMPT]:~$ cyperf-agent-control --help
+Usage: cyperf-agent-control [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --install-completion [bash|zsh|fish|powershell|pwsh]
@@ -25,8 +45,8 @@ Commands:
 ```
 ## Setting controller IP for multiple agents
 ```
-[PROMPT]:~/github/cyperf-agent-control$ ./agent-control set-controller --help
-Usage: agent-control set-controller [OPTIONS] AGENT_IPS...
+[PROMPT]:~$ cyperf-agent-control set-controller --help
+Usage: cyperf-agent-control set-controller [OPTIONS] AGENT_IPS...
 
 Arguments:
   AGENT_IPS...  [required]
@@ -38,7 +58,7 @@ Options:
 Example:
 ========
 
-[PROMPT]:~/github/cyperf-agent-control$ ./agent-control set-controller --controller-ip 10.36.75.126 10.36.75.69 10.36.75.70
+[PROMPT]:~$ cyperf-agent-control set-controller --controller-ip 10.36.75.126 10.36.75.69 10.36.75.70
 Configuring agent 10.36.75.69
 
 Controller is set successfully.
@@ -73,8 +93,8 @@ Connecting....Connected
 ```
 ## Reloading configuration for multiple agents
 ```
-[PROMPT]:~/github/cyperf-agent-control$ ./agent-control reload --help
-Usage: agent-control reload [OPTIONS] AGENT_IPS...
+[PROMPT]:~$ cyperf-agent-control reload --help
+Usage: cyperf-agent-control reload [OPTIONS] AGENT_IPS...
 
 Arguments:
   AGENT_IPS...  [required]
@@ -85,7 +105,7 @@ Options:
 Example:
 ========
 
-[PROMPT]:~/github/cyperf-agent-control$ ./agent-control reload 10.36.75.69 10.36.75.70
+[PROMPT]:~$ cyperf-agent-control reload 10.36.75.69 10.36.75.70
 Configuring agent 10.36.75.69
 
 Current Configurations
@@ -117,8 +137,8 @@ Connecting....Connected
 ```
 ## Setting test interface for multiple agents
 ```
-[PROMPT]:~/github/cyperf-agent-control$ ./agent-control test-interface --help
-Usage: agent-control test-interface [OPTIONS] AGENT_IPS...
+[PROMPT]:~$ cyperf-agent-control test-interface --help
+Usage: cyperf-agent-control test-interface [OPTIONS] AGENT_IPS...
 
 Arguments:
   AGENT_IPS...  [required]
@@ -130,7 +150,7 @@ Options:
 Example:
 ========
 
-[PROMPT]:~/github/cyperf-agent-control$ ./agent-control test-interface --test-interface auto 10.36.75.69 10.36.75.70
+[PROMPT]:~$ cyperf-agent-control test-interface --test-interface auto 10.36.75.69 10.36.75.70
 Configuring agent 10.36.75.69
 
 Test Interface is set successfully.

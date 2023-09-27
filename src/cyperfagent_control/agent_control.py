@@ -55,6 +55,6 @@ def test_interface(agent_ips: Annotated[List[str], typer.Argument()],
     agent = CyPerfAgent (agent_ips)
     agent.SetTestInterface (test_interface)
 
-if __name__ == "__main__":
+def main():
     progName = os.path.splitext(os.path.basename(sys.argv[0]))[0]
     typer.main.get_command(agentContoller)(prog_name=progName)
