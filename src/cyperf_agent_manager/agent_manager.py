@@ -3,7 +3,7 @@
 import os
 import sys
 import typer
-import subprocess
+import paramiko
 from typing import List
 from typing_extensions import Annotated
 
@@ -12,17 +12,27 @@ class CyPerfAgentManager (object):
         self.userName = 'cyperf'
         self.password = 'cyperf'
         self.agentIPs = agentIPs
+        self.client   = paramiko.client.SSHClient()
+        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     def __exec__(self, cmd):
         for agent in self.agentIPs:
-            print (f'Configuring agent {agent}')
-            sshcmd = f'sshpass -p {self.password} ssh -o StrictHostKeyChecking=accept-new {self.userName}@{agent} {cmd}'
-            pipe = subprocess.Popen(sshcmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            result = pipe.communicate()
-            if pipe.returncode:
-                print(f'[stderr] {result[1].decode(encoding="utf-8")}')
-            for line in result[0].decode(encoding='utf-8').split('\n'):
-                print(line)
+            try:
+                print (f'>> Connectiong to agent {agent}')
+                self.client.connect(agent, username=self.userName, password=self.password)
+                channel = self.client.get_transport().open_session()
+                channel.set_combine_stderr(1)
+                try:
+                    print (f'>> Executing command {cmd}')
+                    _stdin, _stdout, _stderr = self.client.exec_command (cmd)
+                    print(_stdout.read().decode())
+                except paramiko.ssh_exception.SSHException:
+                    print (f'Failed to execuye command {cmd}')
+                self.client.close()
+            except paramiko.ssh_exception.NoValidConnectionsError:
+                print (f'Connection is refused by the server')
+            except TimeoutError:
+                print (f'Connection timed out')
 
     def ControllerSet (self, controllerIP):
         cmd = f'cyperfagent controller set {controllerIP}'
@@ -58,3 +68,6 @@ def set_test_interface(agent_ips: Annotated[List[str], typer.Argument()],
 def main():
     progName = os.path.splitext(os.path.basename(sys.argv[0]))[0]
     typer.main.get_command(agentContoller)(prog_name=progName)
+
+if __name__ == "__main__":
+    main()

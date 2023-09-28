@@ -61,7 +61,8 @@ Example:
 ========
 
 [PROMPT]:~$ cyperf-agent-manager set-controller --controller-ip 10.36.75.126 10.36.75.69 10.36.75.70
-Configuring agent 10.36.75.69
+>> Connectiong to agent 10.36.75.69
+>> Executing command cyperfagent controller set 10.36.75.126
 
 Controller is set successfully.
 
@@ -77,7 +78,8 @@ Portmanager service restarted.
 Connecting....Connected
 
 
-Configuring agent 10.36.75.70
+>> Connectiong to agent 10.36.75.70
+>> Executing command cyperfagent controller set 10.36.75.126
 
 Controller is set successfully.
 
@@ -108,7 +110,8 @@ Example:
 ========
 
 [PROMPT]:~$ cyperf-agent-manager reload 10.36.75.69 10.36.75.70
-Configuring agent 10.36.75.69
+>> Connectiong to agent 10.36.75.69
+>> Executing command cyperfagent configuration reload
 
 Current Configurations
   Controller:           10.36.75.126:30422
@@ -122,7 +125,8 @@ Portmanager service restarted.
 Connecting.....Connected
 
 
-Configuring agent 10.36.75.70
+>> Connectiong to agent 10.36.75.70
+>> Executing command cyperfagent configuration reload
 
 Current Configurations
   Controller:           10.36.75.126:30422
@@ -153,7 +157,8 @@ Example:
 ========
 
 [PROMPT]:~$ cyperf-agent-manager set-test-interface --test-interface auto 10.36.75.69 10.36.75.70
-Configuring agent 10.36.75.69
+>> Connectiong to agent 10.36.75.69
+>> Executing command cyperfagent interface test set auto
 
 Test Interface is set successfully.
 
@@ -170,7 +175,8 @@ Use the following commands to explicitly set the Management and Test interfaces:
 Portmanager service restarted.
 
 
-Configuring agent 10.36.75.70
+>> Connectiong to agent 10.36.75.70
+>> Executing command cyperfagent interface test set auto
 
 Test Interface is set successfully.
 
@@ -192,7 +198,7 @@ Portmanager service restarted.
 ## Module
 The python module installed by this package in `cyperf_agent_manager`. This can be used from a custom python script. Here is a smaple code that uses the `cyperf_agent_manager` module.
 ```
-import cyperf_agent_manager as caMgr
+import cyperf_agent_manager.agent_manager as caMgr
 
 agentIPs     = [ '192.168.0.1', '192.168.0.2' ]
 controllerIP = '192.168.100.1'
