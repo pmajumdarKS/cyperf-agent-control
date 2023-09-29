@@ -2,7 +2,7 @@
 A simple python script that can ssh into multiple cyperf agents and run some pre-defined commands
 
 [![PyPI - Version](https://img.shields.io/pypi/v/cyperf-agent-manager.svg)](https://pypi.org/project/cyperf-agent-manager)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cyperf-agent-manager.svg)](https://pypi.org/project/cyper-fagent-manager)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cyperf-agent-manager.svg)](https://pypi.org/project/cyperf-agent-manager)
 
 -----
 
@@ -18,6 +18,14 @@ A simple python script that can ssh into multiple cyperf agents and run some pre
 ```console
 pip install cyperf-agent-manager
 ```
+
+_If `pip` command is not found on your system then use the following commands to install `pip`._
+
+```cosnole
+$ wget https://bootstrap.pypa.io/get-pip.py
+$ python get-pip.py
+```
+_If `python` command is also not found then please look for `python3` command. Otherwise install `python3`._
 
 ## License
 
@@ -48,19 +56,17 @@ Commands:
 ### Setting controller IP for multiple agents
 ```
 [PROMPT]:~$ cyperf-agent-manager set-controller --help
-Usage: cyperf-agent-manager set-controller [OPTIONS] AGENT_IPS...
-
-Arguments:
-  AGENT_IPS...  [required]
+Usage: cyperf-agent-manager set-controller [OPTIONS]
 
 Options:
+  --agent-ips     TEXT  One or more agent names (IP addresses or hostnames). Use quotation marks (`'` or `"`) for whitespace (` `) separated values. Other valid separators are `,`, `;` and `:`. [default: None] [required]
   --controller-ip TEXT  [required]
   --help                Show this message and exit.
 
 Example:
 ========
 
-[PROMPT]:~$ cyperf-agent-manager set-controller --controller-ip 10.36.75.126 10.36.75.69 10.36.75.70
+[PROMPT]:~$ cyperf-agent-manager set-controller --controller-ip 10.36.75.126 --agent-ips '10.36.75.69 10.36.75.70'
 >> Connectiong to agent 10.36.75.69
 >> Executing command cyperfagent controller set 10.36.75.126
 
@@ -98,18 +104,16 @@ Connecting....Connected
 ### Reloading configuration for multiple agents
 ```
 [PROMPT]:~$ cyperf-agent-manager reload --help
-Usage: cyperf-agent-manager reload [OPTIONS] AGENT_IPS...
-
-Arguments:
-  AGENT_IPS...  [required]
+Usage: cyperf-agent-manager reload [OPTIONS]
 
 Options:
-  --help  Show this message and exit.
+  --agent-ips TEXT  One or more agent names (IP addresses or hostnames). Use quotation marks (`'` or `"`) for whitespace (` `) separated values. Other valid separators are `,`, `;` and `:`. [default: None] [required]
+  --help            Show this message and exit.
 
 Example:
 ========
 
-[PROMPT]:~$ cyperf-agent-manager reload 10.36.75.69 10.36.75.70
+[PROMPT]:~$ cyperf-agent-manager reload --agent-ips '10.36.75.69 10.36.75.70'
 >> Connectiong to agent 10.36.75.69
 >> Executing command cyperfagent configuration reload
 
@@ -144,19 +148,17 @@ Connecting....Connected
 ### Setting test interface for multiple agents
 ```
 [PROMPT]:~$ cyperf-agent-manager set-test-interface --help
-Usage: cyperf-agent-manager set-test-interface [OPTIONS] AGENT_IPS...
-
-Arguments:
-  AGENT_IPS...  [required]
+Usage: cyperf-agent-manager set-test-interface [OPTIONS]
 
 Options:
+  --agent-ips      TEXT  One or more agent names (IP addresses or hostnames). Use quotation marks (`'` or `"`) for whitespace (` `) separated values. Other valid separators are `,`, `;` and `:`. [default: None] [required]
   --test-interface TEXT  [required]
   --help                 Show this message and exit.
 
 Example:
 ========
 
-[PROMPT]:~$ cyperf-agent-manager set-test-interface --test-interface auto 10.36.75.69 10.36.75.70
+[PROMPT]:~$ cyperf-agent-manager set-test-interface --agent-ips '10.36.75.69 10.36.75.70' --test-interface auto
 >> Connectiong to agent 10.36.75.69
 >> Executing command cyperfagent interface test set auto
 

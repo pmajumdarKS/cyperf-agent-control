@@ -8,6 +8,19 @@ from typing import List
 from typing_extensions import Annotated
 
 class CyPerfAgentManager (object):
+    agent_ips_help_text = 'One or more agent names (IP addresses or hostnames).'      \
+                          ' Use quotation marks (`\'` or `"`) for whitespace (` `)'   \
+                          ' separated values. Other valid separators are `,`, `;` and `:`.'
+    @staticmethod
+    def extrct_ips (ip_list: str):
+        ips = []
+        for ip1 in ip_list.split():
+            for ip2 in ip1.split(','):
+                for ip3 in ip2.split(';'):
+                    for ip4 in ip3.split(':'):
+                        ips.append (ip4)
+        return ips
+
     def __init__ (self, agentIPs = []):
         self.userName = 'cyperf'
         self.password = 'cyperf'
@@ -49,20 +62,23 @@ class CyPerfAgentManager (object):
 agentContoller = typer.Typer()
 
 @agentContoller.command()
-def set_controller(agent_ips: Annotated[List[str], typer.Argument()],
+def set_controller(agent_ips: Annotated[str, typer.Option(help = CyPerfAgentManager.agent_ips_help_text)],
                    controller_ip: Annotated[str, typer.Option()]):
-    agentMgr = CyPerfAgentManager (agent_ips)
+    agents   = CyPerfAgentManager.extrct_ips (agent_ips)
+    agentMgr = CyPerfAgentManager (agents)
     agentMgr.ControllerSet (controller_ip)
 
 @agentContoller.command()
-def reload(agent_ips: Annotated[List[str], typer.Argument()]):
-    agentMgr = CyPerfAgentManager (agent_ips)
+def reload(agent_ips: Annotated[str, typer.Option(help = CyPerfAgentManager.agent_ips_help_text)]):
+    agents   = CyPerfAgentManager.extrct_ips (agent_ips)
+    agentMgr = CyPerfAgentManager (agents)
     agentMgr.Reload ()
 
 @agentContoller.command()
-def set_test_interface(agent_ips: Annotated[List[str], typer.Argument()],
+def set_test_interface(agent_ips: Annotated[str, typer.Option(help = CyPerfAgentManager.agent_ips_help_text)],
                    test_interface: Annotated[str, typer.Option()]):
-    agentMgr = CyPerfAgentManager (agent_ips)
+    agents   = CyPerfAgentManager.extrct_ips (agent_ips)
+    agentMgr = CyPerfAgentManager (agents)
     agentMgr.SetTestInterface (test_interface)
 
 def main():
