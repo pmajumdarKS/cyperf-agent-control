@@ -48,9 +48,169 @@ Options:
   --help                          Show this message and exit.
 
 Commands:
+  install-build
   reload
   set-controller
   set-test-interface
+
+```
+### Installing an agent build on multiple agents
+```
+[PROMPT]:~$ cyperf-agent-manager install-build --help
+Usage: cyperf-agent-manager install-build [OPTIONS]
+
+Options:
+  --agent-ips        TEXT  One or more agent names (IP addresses or hostnames). Use quotation marks (`'` or `"`) for whitespace (` `) separated values. Other valid separators are `,`, `;` and `:`. [default: None] [required]
+  --debian-file-path FILE  [default: None] [required]
+  --help                   Show this message and exit.
+
+Example:
+========
+
+[PROMPT]:~$ cyperf-agent-manager install-build --agent-ips '10.36.75.69 10.36.75.70' --debian-file-path ./tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb
+>> Connectiong to agent 10.36.75.69
+>> Tranferring file ./tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb to ~/tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb
+>> Connectiong to agent 10.36.75.70
+>> Tranferring file ./tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb to ~/tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb
+>> Connectiong to agent 10.36.75.69
+>> Executing command sudo -S -p '' apt install -y ~/tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  tiger-x86-64-ixos-8.50-ixstack-raw-release-1.0.3.575
+0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Need to get 0 B/62.0 MB of archives.
+After this operation, 0 B of additional disk space will be used.
+Get:1 /home/cyperf/tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb tiger-x86-64-ixos-8.50-ixstack-raw-release-1.0.3.575 all 1.0.3.575 [62.0 MB]
+Selecting previously unselected package tiger-x86-64-ixos-8.50-ixstack-raw-release-1.0.3.575.
+(Reading database ... 69919 files and directories currently installed.)
+Preparing to unpack .../tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb ...
+Unpacking tiger-x86-64-ixos-8.50-ixstack-raw-release-1.0.3.575 (1.0.3.575) ...
+Setting up tiger-x86-64-ixos-8.50-ixstack-raw-release-1.0.3.575 (1.0.3.575) ...
+Creating symbolic links
+Installing portmanager
+  Stopping existing portmanager service.
+  Creating symbolic links
+  Removing the existing cyperfagentcli auto-completion script
+  Ensuring /etc/bash_completion.d/ directory is present in the system
+
+Reusing following configurations from existing configuration
+  Broker URL:                  nats://10.36.75.126:30422
+  Management Interface:        ens160
+  Test Interface:       [auto]
+  Hooks:
+    pre_diagnostic_collection: /opt/keysight/tiger/active/bin/utilities/01_ipsec_concatenate_key_logs
+  Tags:       []
+
+  Removing portmanager database
+  Installing portmanager service
+  Installing agent-update service
+  Starting portmanager service
+  Setting stack type ixstack-raw
+
+Parsing config JSON file
+schemaFileUri = file:///opt/keysight/tiger/active/bin/portmanager/portmanager-config.json.schema.json configFileUri = file:///etc/portmanager/portmanager-config.json
+Restarting portmanager
+Stack type set to: ixstack-raw
+
+Portmanager service restarted.
+
+  Starting portmanager service
+Installing QAT Engine
+
+	****Installing QAT Engine****>
+
+
+
+
+
+	***QAT Engine Installation Complete***>
+
+
+
+
+
+	***installer operation status is Success***>
+
+
+/
+
+Hook pre_diagnostic_collection is set to /opt/keysight/tiger/active/bin/utilities/01_ipsec_concatenate_key_logs.
+
+
+Portmanager service restarted.
+
+
+>> Connectiong to agent 10.36.75.70
+>> Executing command sudo -S -p '' apt install -y ~/tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  tiger-x86-64-ixos-8.50-ixstack-raw-release-1.0.3.575
+0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Need to get 0 B/62.0 MB of archives.
+After this operation, 0 B of additional disk space will be used.
+Get:1 /home/cyperf/tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb tiger-x86-64-ixos-8.50-ixstack-raw-release-1.0.3.575 all 1.0.3.575 [62.0 MB]
+Selecting previously unselected package tiger-x86-64-ixos-8.50-ixstack-raw-release-1.0.3.575.
+(Reading database ... 72923 files and directories currently installed.)
+Preparing to unpack .../tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb ...
+Unpacking tiger-x86-64-ixos-8.50-ixstack-raw-release-1.0.3.575 (1.0.3.575) ...
+Setting up tiger-x86-64-ixos-8.50-ixstack-raw-release-1.0.3.575 (1.0.3.575) ...
+Creating symbolic links
+Installing portmanager
+  Stopping existing portmanager service.
+  Creating symbolic links
+  Removing the existing cyperfagentcli auto-completion script
+  Ensuring /etc/bash_completion.d/ directory is present in the system
+
+Reusing following configurations from existing configuration
+  Broker URL:                  nats://10.36.75.126:30422
+  Management Interface:        ens160
+  Test Interface:       [auto]
+  Hooks:
+    pre_diagnostic_collection: /opt/keysight/tiger/active/bin/utilities/01_ipsec_concatenate_key_logs
+  Tags:       []
+
+  Removing portmanager database
+  Installing portmanager service
+  Installing agent-update service
+  Starting portmanager service
+  Setting stack type ixstack-raw
+
+Parsing config JSON file
+schemaFileUri = file:///opt/keysight/tiger/active/bin/portmanager/portmanager-config.json.schema.json configFileUri = file:///etc/portmanager/portmanager-config.json
+Restarting portmanager
+Stack type set to: ixstack-raw
+
+Portmanager service restarted.
+
+  Starting portmanager service
+Installing QAT Engine
+
+	****Installing QAT Engine****>
+
+
+
+
+
+	***QAT Engine Installation Complete***>
+
+
+
+
+
+	***installer operation status is Success***>
+
+
+/
+
+Hook pre_diagnostic_collection is set to /opt/keysight/tiger/active/bin/utilities/01_ipsec_concatenate_key_logs.
+
+
+Portmanager service restarted.
+
 
 ```
 ### Setting controller IP for multiple agents
@@ -205,9 +365,11 @@ import cyperf_agent_manager.agent_manager as caMgr
 agentIPs     = [ '192.168.0.1', '192.168.0.2' ]
 controllerIP = '192.168.100.1'
 testIface    = 'ens192'
+debFile      = './tiger_x86_64_ixos-8.50_ixstack-raw_release_1.0.3.575.deb'
 
 agentMgr     = caMgr.CyPerfAgentManager(agentIPs)
 
+agentMgr.InstallBuild (debFile)
 agentMgr.ControllerSet (controllerIP)
 agentMgr.Reload ()
 agentMgr.SetTestInterface (testIface)
