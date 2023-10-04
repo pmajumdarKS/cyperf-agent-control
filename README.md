@@ -40,19 +40,13 @@ The command details can be found by running the script with `--help` option, as 
 Usage: cyperf-agent-manager [OPTIONS] COMMAND [ARGS]...
 
 Options:
-  --install-completion [bash|zsh|fish|powershell|pwsh]
-                                  Install completion for the specified shell.
-  --show-completion [bash|zsh|fish|powershell|pwsh]
-                                  Show completion for the specified shell, to
-                                  copy it or customize the installation.
-  --help                          Show this message and exit.
+  --help  Show this message and exit.
 
 Commands:
   install-build
   reload
   set-controller
   set-test-interface
-
 ```
 ### Installing an agent build on multiple agents
 ```
@@ -60,9 +54,20 @@ Commands:
 Usage: cyperf-agent-manager install-build [OPTIONS]
 
 Options:
-  --agent-ips        TEXT  One or more agent names (IP addresses or hostnames). Use quotation marks (`'` or `"`) for whitespace (` `) separated values. Other valid separators are `,`, `;` and `:`. [default: None] [required]
-  --debian-file-path FILE  [default: None] [required]
-  --help                   Show this message and exit.
+  --agent-ips NETWORK ADDRESS LIST
+                                  One or more agent names (IP addresses or
+                                  hostnames). Use quotation marks (`'` or `"`)
+                                  for whitespace (` `) separated values. Other
+                                  valid separators are `,`, `;` and `:`.
+                                  [required]
+  --username TEXT                 A common username for all the agents.
+                                  [default: cyperf]
+  --override-password             This along with --password option should be
+                                  used for non default password.
+  --password TEXT                 A common password for all the agents.
+  --debian-file-path FILE         Path to the .deb file to be installed.
+                                  [required]
+  --help                          Show this message and exit.
 
 Example:
 ========
@@ -219,9 +224,21 @@ Portmanager service restarted.
 Usage: cyperf-agent-manager set-controller [OPTIONS]
 
 Options:
-  --agent-ips     TEXT  One or more agent names (IP addresses or hostnames). Use quotation marks (`'` or `"`) for whitespace (` `) separated values. Other valid separators are `,`, `;` and `:`. [default: None] [required]
-  --controller-ip TEXT  [required]
-  --help                Show this message and exit.
+  --agent-ips NETWORK ADDRESS LIST
+                                  One or more agent names (IP addresses or
+                                  hostnames). Use quotation marks (`'` or `"`)
+                                  for whitespace (` `) separated values. Other
+                                  valid separators are `,`, `;` and `:`.
+                                  [required]
+  --username TEXT                 A common username for all the agents.
+                                  [default: cyperf]
+  --override-password             This along with --password option should be
+                                  used for non default password.
+  --password TEXT                 A common password for all the agents.
+  --controller-ip NETWORK ADDRESS
+                                  The IP/Hostname of the CyPerf controller.
+                                  [required]
+  --help                          Show this message and exit.
 
 Example:
 ========
@@ -267,8 +284,18 @@ Connecting....Connected
 Usage: cyperf-agent-manager reload [OPTIONS]
 
 Options:
-  --agent-ips TEXT  One or more agent names (IP addresses or hostnames). Use quotation marks (`'` or `"`) for whitespace (` `) separated values. Other valid separators are `,`, `;` and `:`. [default: None] [required]
-  --help            Show this message and exit.
+  --agent-ips NETWORK ADDRESS LIST
+                                  One or more agent names (IP addresses or
+                                  hostnames). Use quotation marks (`'` or `"`)
+                                  for whitespace (` `) separated values. Other
+                                  valid separators are `,`, `;` and `:`.
+                                  [required]
+  --username TEXT                 A common username for all the agents.
+                                  [default: cyperf]
+  --override-password             This along with --password option should be
+                                  used for non default password.
+  --password TEXT                 A common password for all the agents.
+  --help                          Show this message and exit.
 
 Example:
 ========
@@ -311,9 +338,21 @@ Connecting....Connected
 Usage: cyperf-agent-manager set-test-interface [OPTIONS]
 
 Options:
-  --agent-ips      TEXT  One or more agent names (IP addresses or hostnames). Use quotation marks (`'` or `"`) for whitespace (` `) separated values. Other valid separators are `,`, `;` and `:`. [default: None] [required]
-  --test-interface TEXT  [required]
-  --help                 Show this message and exit.
+  --agent-ips NETWORK ADDRESS LIST
+                                  One or more agent names (IP addresses or
+                                  hostnames). Use quotation marks (`'` or `"`)
+                                  for whitespace (` `) separated values. Other
+                                  valid separators are `,`, `;` and `:`.
+                                  [required]
+  --username TEXT                 A common username for all the agents.
+                                  [default: cyperf]
+  --override-password             This along with --password option should be
+                                  used for non default password.
+  --password TEXT                 A common password for all the agents.
+  --test-interface TEXT           The name of the interface on the agents
+                                  which will be used for test traffic.
+                                  [required]
+  --help                          Show this message and exit.
 
 Example:
 ========

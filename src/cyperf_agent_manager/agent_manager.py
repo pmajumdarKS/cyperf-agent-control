@@ -1,31 +1,23 @@
-#!/usr/bin/python
-
 import os
 import sys
-import typer
+import click
 import paramiko
 import scp
-from typing import List
-from typing_extensions import Annotated
-from pathlib import Path
+from .custom_types import NETADDR, NETADDRLIST, OptionalPassword
 
 class CyPerfAgentManager (object):
-    agent_ips_help_text = 'One or more agent names (IP addresses or hostnames).'      \
+    AGENT_IPS_HELP_TEXT = 'One or more agent names (IP addresses or hostnames).'      \
                           ' Use quotation marks (`\'` or `"`) for whitespace (` `)'   \
                           ' separated values. Other valid separators are `,`, `;` and `:`.'
-    @staticmethod
-    def extrct_ips (ip_list: str):
-        ips = []
-        for ip1 in ip_list.split():
-            for ip2 in ip1.split(','):
-                for ip3 in ip2.split(';'):
-                    for ip4 in ip3.split(':'):
-                        ips.append (ip4)
-        return ips
+    DEFAULT_USER_NAME   = 'cyperf'
+    DEFAULT_PASSWORD    = 'cyperf'
 
-    def __init__ (self, agentIPs = []):
-        self.userName = 'cyperf'
-        self.password = 'cyperf'
+    def __init__ (self,
+                  agentIPs = [],
+                  userName = DEFAULT_USER_NAME,
+                  password = DEFAULT_PASSWORD):
+        self.userName = userName
+        self.password = password
         self.agentIPs = agentIPs
         self.client   = paramiko.client.SSHClient()
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -51,6 +43,8 @@ class CyPerfAgentManager (object):
                 self.client.close()
             except paramiko.ssh_exception.NoValidConnectionsError:
                 print (f'Connection is refused by the server')
+            except paramiko.ssh_exception.AuthenticationException:
+                print (f'Login failed because of invalid credentials')
             except TimeoutError:
                 print (f'Connection timed out')
 
@@ -68,6 +62,8 @@ class CyPerfAgentManager (object):
                 self.client.close()
             except paramiko.ssh_exception.NoValidConnectionsError:
                 print (f'Connection is refused by the server')
+            except paramiko.ssh_exception.AuthenticationException:
+                print (f'Login failed because of invalid credentials')
             except TimeoutError:
                 print (f'Connection timed out')
 
@@ -89,38 +85,99 @@ class CyPerfAgentManager (object):
         self.__copy__ (debFile, remotePath)
         self.__exec__ (cmd, sudo=True)
 
-agentContoller = typer.Typer()
+pass_agent_manager = click.make_pass_decorator(CyPerfAgentManager)
 
-@agentContoller.command()
-def set_controller(agent_ips: Annotated[str, typer.Option(help = CyPerfAgentManager.agent_ips_help_text)],
-                   controller_ip: Annotated[str, typer.Option()]):
-    agents   = CyPerfAgentManager.extrct_ips (agent_ips)
-    agentMgr = CyPerfAgentManager (agents)
-    agentMgr.ControllerSet (controller_ip)
+def agent_ips_option(f):
+    def callback(ctx, param, value):
+        agentMgr = ctx.ensure_object(CyPerfAgentManager)
+        agentMgr.agentIPs = value
+        return value
+    return click.option('--agent-ips',
+                        required = True,
+                        type = NETADDRLIST,
+                        expose_value = False,
+                        help = CyPerfAgentManager.AGENT_IPS_HELP_TEXT,
+                        callback = callback)(f)
 
-@agentContoller.command()
-def reload(agent_ips: Annotated[str, typer.Option(help = CyPerfAgentManager.agent_ips_help_text)]):
-    agents   = CyPerfAgentManager.extrct_ips (agent_ips)
-    agentMgr = CyPerfAgentManager (agents)
-    agentMgr.Reload ()
+def user_name_option(f):
+    def callback(ctx, param, value):
+        agentMgr = ctx.ensure_object(CyPerfAgentManager)
+        agentMgr.userName = value
+        return value
+    return click.option('--username',
+                        required = False,
+                        type = str,
+                        default = CyPerfAgentManager.DEFAULT_USER_NAME,
+                        show_default = True,
+                        expose_value = False,
+                        help = 'A common username for all the agents.',
+                        callback = callback)(f)
 
-@agentContoller.command()
-def set_test_interface(agent_ips: Annotated[str, typer.Option(help = CyPerfAgentManager.agent_ips_help_text)],
-                       test_interface: Annotated[str, typer.Option()]):
-    agents   = CyPerfAgentManager.extrct_ips (agent_ips)
-    agentMgr = CyPerfAgentManager (agents)
-    agentMgr.SetTestInterface (test_interface)
+def password_option(f):
+    def callback(ctx, param, value):
+        agentMgr = ctx.ensure_object(CyPerfAgentManager)
+        agentMgr.password = value
+        return value
+    return click.password_option(default = CyPerfAgentManager.DEFAULT_PASSWORD,
+                                 expose_value = False,
+                                 help = 'A common password for all the agents.',
+                                 cls = OptionalPassword,
+                                 callback = callback)(f)
 
-@agentContoller.command()
-def install_build(agent_ips: Annotated[str, typer.Option(help = CyPerfAgentManager.agent_ips_help_text)],
-                  debian_file_path: Annotated[Path, typer.Option(exists=True, dir_okay=False)]):
-    agents   = CyPerfAgentManager.extrct_ips (agent_ips)
-    agentMgr = CyPerfAgentManager (agents)
-    agentMgr.InstallBuild (debian_file_path)
+def common_options(f):
+    f = password_option (f)
+    f = click.option('--override-password',
+                     default = False,
+                     required = False,
+                     is_flag = True,
+                     expose_value = False,
+                     help = 'This along with --password option should be used for non default password.')(f)
+    f = user_name_option (f)
+    f = agent_ips_option (f)
+    return f
+
+@click.group()
+def agent_manager():
+    pass
+
+@agent_manager.command()
+@common_options
+@pass_agent_manager
+@click.option('--controller-ip',
+              required = True,
+              help     = 'The IP/Hostname of the CyPerf controller.',
+              type     = NETADDR,
+              prompt   = True)
+def set_controller(agentManager, controller_ip):
+    agentManager.ControllerSet (controller_ip)
+
+@agent_manager.command()
+@common_options
+@pass_agent_manager
+def reload(agentManager):
+    agentManager.Reload ()
+
+@agent_manager.command()
+@common_options
+@pass_agent_manager
+@click.option('--test-interface',
+              required = True,
+              help     = 'The name of the interface on the agents which will be used for test traffic.',
+              type     = str,
+              prompt   = True)
+def set_test_interface(agentManager, test_interface):
+    agentManager.SetTestInterface (test_interface)
+
+@agent_manager.command()
+@common_options
+@pass_agent_manager
+@click.option('--debian-file-path',
+              required = True,
+              help     = 'Path to the .deb file to be installed.',
+              type     = click.Path(exists=True, file_okay=True, dir_okay=False, readable=True),
+              prompt   = True)
+def install_build(agentManager, debian_file_path):
+    agentManager.InstallBuild (debian_file_path)
 
 def main():
-    progName = os.path.splitext(os.path.basename(sys.argv[0]))[0]
-    typer.main.get_command(agentContoller)(prog_name=progName)
-
-if __name__ == "__main__":
-    main()
+    agent_manager()
