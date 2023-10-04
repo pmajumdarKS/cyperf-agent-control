@@ -27,45 +27,45 @@ class CyPerfAgentManager (object):
             cmd = f'sudo -S -p \'\' {cmd}' 
         for agent in self.agentIPs:
             try:
-                print (f'>> Connectiong to agent {agent}')
+                click.echo (f'>> Connectiong to agent {agent}')
                 self.client.connect(agent, username=self.userName, password=self.password)
                 channel = self.client.get_transport().open_session()
                 channel.set_combine_stderr(1)
                 try:
-                    print (f'>> Executing command {cmd}')
+                    click.echo (f'>> Executing command {cmd}')
                     _stdin, _stdout, _stderr = self.client.exec_command (cmd)
                     if sudo:
                         _stdin.write(self.password + "\n")
                         _stdin.flush()
-                    print(_stdout.read().decode())
+                    click.echo(_stdout.read().decode())
                 except paramiko.ssh_exception.SSHException:
-                    print (f'Failed to execute command {cmd}')
+                    click.echo (f'Failed to execute command {cmd}')
                 self.client.close()
             except paramiko.ssh_exception.NoValidConnectionsError:
-                print (f'Connection is refused by the server')
+                click.echo (f'Connection is refused by the server')
             except paramiko.ssh_exception.AuthenticationException:
-                print (f'Login failed because of invalid credentials')
+                click.echo (f'Login failed because of invalid credentials')
             except TimeoutError:
-                print (f'Connection timed out')
+                click.echo (f'Connection timed out')
 
     def __copy__(self, localPath, remotePath):
         for agent in self.agentIPs:
             try:
-                print (f'>> Connectiong to agent {agent}')
+                click.echo (f'>> Connectiong to agent {agent}')
                 self.client.connect(agent, username=self.userName, password=self.password)
                 try:
-                    print (f'>> Tranferring file {localPath} to {remotePath}')
+                    click.echo (f'>> Tranferring file {localPath} to {remotePath}')
                     with scp.SCPClient(self.client.get_transport()) as _scp:
                         _scp.put(localPath, remotePath)
                 except scp.SCPException:
-                    print (f'Failed to transfer file {localPath} to {remotePath}')
+                    click.echo (f'Failed to transfer file {localPath} to {remotePath}')
                 self.client.close()
             except paramiko.ssh_exception.NoValidConnectionsError:
-                print (f'Connection is refused by the server')
+                click.echo (f'Connection is refused by the server')
             except paramiko.ssh_exception.AuthenticationException:
-                print (f'Login failed because of invalid credentials')
+                click.echo (f'Login failed because of invalid credentials')
             except TimeoutError:
-                print (f'Connection timed out')
+                click.echo (f'Connection timed out')
 
     def ControllerSet (self, controllerIP):
         cmd = f'cyperfagent controller set {controllerIP}'

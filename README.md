@@ -11,6 +11,7 @@ A simple python script that can ssh into multiple cyperf agents and run some pre
 - [Installation](#installation)
 - [License](#license)
 - [CLI](#cli)
+- [Password Override](#password override)
 - [Module](#module)
 
 ## Installation
@@ -392,6 +393,52 @@ Use the following commands to explicitly set the Management and Test interfaces:
   cyperfagent interface test set <Test interface name>
 
 Portmanager service restarted.
+
+
+```
+
+## Password Override
+Even though CyPerf agents are deployed from official machice images provided CyPerf team, CyPerf can also installed on arbitrary machines. All CyPerf machine images come with a default password. `cyperf-agent-manager` by default tries to connect with that default password. Obviously the default password won't work for arbitrary machines. In those cases the password has to be overriden. The options `--override-password` and `--password` are there for that purpose only but using `--password` directly in CLI is unsafe. In that case the actual password will be visible in plain text. A better option is to use only the `--override-password` option in CLI and then a password prompt will come up. The user will be able to type the password in an invisible way. Please see the example below.
+
+### Example
+```
+[PROMPT]:$ cyperf-agent-manager reload --agent-ips '10.36.75.69 10.36.75.70' --override-password
+Password [cyperf]:
+Repeat for confirmation:
+>> Connectiong to agent 10.36.75.69
+>> Executing command cyperfagent configuration reload
+
+Current Configurations
+  Controller:           10.36.75.126:30422
+  Management Interface: ens160
+  Test Interface:       auto (Auto-detected interface is ens192)
+
+Please make sure that the URL and interfaces are set correctly for the tests to run.
+Use the following commands to explicitly set the Management and Test interfaces:
+  cyperfagent interface management set <Management interface name>
+  cyperfagent interface test set <Test interface name>
+
+Portmanager service restarted.
+
+Connecting.....Connected
+
+
+>> Connectiong to agent 10.36.75.70
+>> Executing command cyperfagent configuration reload
+
+Current Configurations
+  Controller:           10.36.75.126:30422
+  Management Interface: ens160
+  Test Interface:       auto (Auto-detected interface is ens192)
+
+Please make sure that the URL and interfaces are set correctly for the tests to run.
+Use the following commands to explicitly set the Management and Test interfaces:
+  cyperfagent interface management set <Management interface name>
+  cyperfagent interface test set <Test interface name>
+
+Portmanager service restarted.
+
+Connecting....Connected
 
 
 ```
