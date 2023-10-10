@@ -66,6 +66,8 @@ Options:
   --override-password             This along with --password option should be
                                   used for non default password.
   --password TEXT                 A common password for all the agents.
+  --key-file FILE                 A common key file for opening ssh
+                                  connections to all the agents.
   --debian-file-path FILE         Path to the .deb file to be installed.
                                   [required]
   --help                          Show this message and exit.
@@ -236,6 +238,8 @@ Options:
   --override-password             This along with --password option should be
                                   used for non default password.
   --password TEXT                 A common password for all the agents.
+  --key-file FILE                 A common key file for opening ssh
+                                  connections to all the agents.
   --controller-ip NETWORK ADDRESS
                                   The IP/Hostname of the CyPerf controller.
                                   [required]
@@ -296,6 +300,8 @@ Options:
   --override-password             This along with --password option should be
                                   used for non default password.
   --password TEXT                 A common password for all the agents.
+  --key-file FILE                 A common key file for opening ssh
+                                  connections to all the agents.
   --help                          Show this message and exit.
 
 Example:
@@ -350,6 +356,8 @@ Options:
   --override-password             This along with --password option should be
                                   used for non default password.
   --password TEXT                 A common password for all the agents.
+  --key-file FILE                 A common key file for opening ssh
+                                  connections to all the agents.
   --test-interface TEXT           The name of the interface on the agents
                                   which will be used for test traffic.
                                   [required]
@@ -399,6 +407,7 @@ Portmanager service restarted.
 
 ## Password Override
 Even though CyPerf agents are deployed from official machice images provided CyPerf team, CyPerf can also installed on arbitrary machines. All CyPerf machine images come with a default password. `cyperf-agent-manager` by default tries to connect with that default password. Obviously the default password won't work for arbitrary machines. In those cases the password has to be overriden. The options `--override-password` and `--password` are there for that purpose only but using `--password` directly in CLI is unsafe. In that case the actual password will be visible in plain text. A better option is to use only the `--override-password` option in CLI and then a password prompt will come up. The user will be able to type the password in an invisible way. Please see the example below.
+_If a key file is provided using `--key-file` option then `cyperf-agent-manager` will try to open a connection with each agent using the key file first. If authentication fails with the key file then it will try the password._
 
 ### Example
 ```

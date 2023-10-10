@@ -1,42 +1,48 @@
 import os
-import sys
 import click
 import paramiko
 import scp
-from .custom_types import NETADDR, NETADDRLIST, OptionalPassword
+from .common_constants import CyPerfDefaults
 
 class CyPerfAgentManager (object):
-    AGENT_IPS_HELP_TEXT = 'One or more agent names (IP addresses or hostnames).'      \
-                          ' Use quotation marks (`\'` or `"`) for whitespace (` `)'   \
-                          ' separated values. Other valid separators are `,`, `;` and `:`.'
-    DEFAULT_USER_NAME   = 'cyperf'
-    DEFAULT_PASSWORD    = 'cyperf'
-
     def __init__ (self,
                   agentIPs = [],
-                  userName = DEFAULT_USER_NAME,
-                  password = DEFAULT_PASSWORD):
+                  userName = CyPerfDefaults.DEFAULT_USER_NAME,
+                  password = CyPerfDefaults.DEFAULT_PASSWORD,
+                  keyFile  = None):
+        self.agentIPs = agentIPs
         self.userName = userName
         self.password = password
-        self.agentIPs = agentIPs
+        self.keyFile  = keyFile
         self.client   = paramiko.client.SSHClient()
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
+    def __connect__(self, addr = '127.0.0.1'):
+        if self.keyFile:
+           try: 
+                self.client.connect(addr, username=self.userName, key_filename=self.keyFile)
+                return
+           except ValueError:
+                click.echo (f'{self.keyFile} is not appropriate for {addr}, trying with password \'{self.password}\'')
+           except paramiko.ssh_exception.AuthenticationException:
+                click.echo (f'Key based authentication failed, trying with password \'{self.password}\'')
+        self.client.connect(addr, username=self.userName, password=self.password)
+        
     def __exec__(self, cmd, sudo=False):
         if sudo:
             cmd = f'sudo -S -p \'\' {cmd}' 
         for agent in self.agentIPs:
             try:
                 click.echo (f'>> Connectiong to agent {agent}')
-                self.client.connect(agent, username=self.userName, password=self.password)
-                channel = self.client.get_transport().open_session()
-                channel.set_combine_stderr(1)
+                self.__connect__(agent)
                 try:
                     click.echo (f'>> Executing command {cmd}')
-                    _stdin, _stdout, _stderr = self.client.exec_command (cmd)
+                    _stdin, _stdout, _ = self.client.exec_command (cmd)
                     if sudo:
                         _stdin.write(self.password + "\n")
                         _stdin.flush()
+                    _stdin.close()
+                    _stdout.channel.set_combine_stderr(True)
                     click.echo(_stdout.read().decode())
                 except paramiko.ssh_exception.SSHException:
                     click.echo (f'Failed to execute command {cmd}')
@@ -52,7 +58,7 @@ class CyPerfAgentManager (object):
         for agent in self.agentIPs:
             try:
                 click.echo (f'>> Connectiong to agent {agent}')
-                self.client.connect(agent, username=self.userName, password=self.password)
+                self.__connect__(agent)
                 try:
                     click.echo (f'>> Tranferring file {localPath} to {remotePath}')
                     with scp.SCPClient(self.client.get_transport()) as _scp:
@@ -85,99 +91,3 @@ class CyPerfAgentManager (object):
         self.__copy__ (debFile, remotePath)
         self.__exec__ (cmd, sudo=True)
 
-pass_agent_manager = click.make_pass_decorator(CyPerfAgentManager)
-
-def agent_ips_option(f):
-    def callback(ctx, param, value):
-        agentMgr = ctx.ensure_object(CyPerfAgentManager)
-        agentMgr.agentIPs = value
-        return value
-    return click.option('--agent-ips',
-                        required = True,
-                        type = NETADDRLIST,
-                        expose_value = False,
-                        help = CyPerfAgentManager.AGENT_IPS_HELP_TEXT,
-                        callback = callback)(f)
-
-def user_name_option(f):
-    def callback(ctx, param, value):
-        agentMgr = ctx.ensure_object(CyPerfAgentManager)
-        agentMgr.userName = value
-        return value
-    return click.option('--username',
-                        required = False,
-                        type = str,
-                        default = CyPerfAgentManager.DEFAULT_USER_NAME,
-                        show_default = True,
-                        expose_value = False,
-                        help = 'A common username for all the agents.',
-                        callback = callback)(f)
-
-def password_option(f):
-    def callback(ctx, param, value):
-        agentMgr = ctx.ensure_object(CyPerfAgentManager)
-        agentMgr.password = value
-        return value
-    return click.password_option(default = CyPerfAgentManager.DEFAULT_PASSWORD,
-                                 expose_value = False,
-                                 help = 'A common password for all the agents.',
-                                 cls = OptionalPassword,
-                                 callback = callback)(f)
-
-def common_options(f):
-    f = password_option (f)
-    f = click.option('--override-password',
-                     default = False,
-                     required = False,
-                     is_flag = True,
-                     expose_value = False,
-                     help = 'This along with --password option should be used for non default password.')(f)
-    f = user_name_option (f)
-    f = agent_ips_option (f)
-    return f
-
-@click.group()
-def agent_manager():
-    pass
-
-@agent_manager.command()
-@common_options
-@pass_agent_manager
-@click.option('--controller-ip',
-              required = True,
-              help     = 'The IP/Hostname of the CyPerf controller.',
-              type     = NETADDR,
-              prompt   = True)
-def set_controller(agentManager, controller_ip):
-    agentManager.ControllerSet (controller_ip)
-
-@agent_manager.command()
-@common_options
-@pass_agent_manager
-def reload(agentManager):
-    agentManager.Reload ()
-
-@agent_manager.command()
-@common_options
-@pass_agent_manager
-@click.option('--test-interface',
-              required = True,
-              help     = 'The name of the interface on the agents which will be used for test traffic.',
-              type     = str,
-              prompt   = True)
-def set_test_interface(agentManager, test_interface):
-    agentManager.SetTestInterface (test_interface)
-
-@agent_manager.command()
-@common_options
-@pass_agent_manager
-@click.option('--debian-file-path',
-              required = True,
-              help     = 'Path to the .deb file to be installed.',
-              type     = click.Path(exists=True, file_okay=True, dir_okay=False, readable=True),
-              prompt   = True)
-def install_build(agentManager, debian_file_path):
-    agentManager.InstallBuild (debian_file_path)
-
-def main():
-    agent_manager()
