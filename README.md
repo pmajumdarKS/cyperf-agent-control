@@ -11,7 +11,7 @@ A simple python script that can ssh into multiple cyperf agents and run some pre
 - [Installation](#installation)
 - [License](#license)
 - [CLI](#cli)
-- [Password Override](#password override)
+- [Password Override](#password-override)
 - [Module](#module)
 
 ## Installation
